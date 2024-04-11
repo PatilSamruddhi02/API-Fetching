@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SP Cart Details</title>
+    <style>
+        .cart-details-container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: khaki;  /* Change background color to white */
+        }
+        .cart-details-container h6{
+            font-size: 30px;
+            text-align: center;
+            font-weight: 700;
+            border: 2px solid hsl(0, 2%, 8%); /* Add border for each item */
+            border-radius: 5px; /* Add border radius for a rounded appearance */
+        }
+        .cart-items {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between; /* Adjust alignment */
+            
+        }
+        
+        .cart-item {
+            width: 24%; /* Adjust width to fit two items per row */
+            margin-bottom: 20px;
+            background-color: white;
+            border: 1px solid #ccc; /* Add border for each item */
+            border-radius: 5px; /* Add border radius for a rounded appearance */
+            padding: 10px; /* Add padding for spacing */
+            box-sizing: border-box; /* Include padding in width calculation */
+            position: relative; /* Required for absolute positioning */
+            text-align: center;
+            align-items: center;
+            font-size: 20px;
+        }
+        
+        .cart-item img {
+            width: 100%; /* Make images fill the container */
+            height: 200px; /* Allow height to adjust proportionally */
+            margin-bottom: 10px;
+        }
+        
+        /* Remove border bottom for last item */
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+        
+        /* Style delete button */
+        .delete-button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="cart-details-container">
+        <h2>Cart Details</h2>
+        <div id="cart-items" class="cart-items"></div>
+        <h6>Total Amount: $<span id="total-amount">0.00</span></h6>
+    </div>
+    <h1 style="text-align: center;">Visit Again...!!</h1>
+
+    <!-- Your existing JavaScript code -->
+    <script>
+        // JavaScript code for rendering cart items
+        document.addEventListener('DOMContentLoaded', function() {
+            const cartData = JSON.parse(localStorage.getItem('cart'));
+            const cartItemsContainer = document.getElementById('cart-items');
+            const totalAmountSpan = document.getElementById('total-amount');
+            let totalAmount = 0;
+
+            if (cartData && cartData.length > 0) {
+                cartData.forEach((product, index) => {
+                    const cartItemDiv = document.createElement('div');
+                    cartItemDiv.classList.add('cart-item');
+                    const totalPrice = parseFloat(product.price) * product.quantity; // Calculate total price for this product
+                    totalAmount += totalPrice;
+                    cartItemDiv.innerHTML = `
+                        <p>${product.title}</p>
+                        <img src="${product.image}" alt="${product.title}">
+                        <p>${product.title} - $${product.price}</p>
+                        <p>Compare_at_Price: $${product.compare_at_price}</p>
+                        <p class="vendor">Vendor: ${product.vendor}</p>
+                        <h5 class="text">${product.badge_text}</h5>
+                        <p>Quantity: ${product.quantity}</p> <!-- Display quantity -->
+                        <button class="delete-button" onclick="deleteItem(${index})">X</button>
+                    `;
+                    cartItemsContainer.appendChild(cartItemDiv);
+                });
+                totalAmountSpan.textContent = totalAmount.toFixed(2); // Display total amount
+            } else {
+                cartItemsContainer.innerHTML = '<p>Your cart is empty.</p>';
+            }
+        });
+
+        // Function to delete item from cart
+        function deleteItem(index) {
+            let cartData = JSON.parse(localStorage.getItem('cart'));
+            cartData.splice(index, 1); // Remove item at given index
+            localStorage.setItem('cart', JSON.stringify(cartData));
+            location.reload(); // Refresh the page to reflect changes
+        }
+     </script>
+</body>
+</html>
